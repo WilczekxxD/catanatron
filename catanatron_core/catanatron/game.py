@@ -146,7 +146,14 @@ class Game:
         """
         player = self.state.current_player()
         actions = self.state.playable_actions
-
+        '''
+        print(f"buildings: {self.state.board.buildings}")
+        print(f"roads: {self.state.board.roads}")
+        print(f"components: {self.state.board.connected_components}")
+        print(f"buildable ids: {self.state.board.board_buildable_ids}")
+        print(f"map: {self.state.board.map.land_tiles}")
+        '''
+        # print(self.state.board.get_player_port_resources(player.color))
         action = (
             decide_fn(player, self, actions)
             if decide_fn is not None
