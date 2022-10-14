@@ -13,6 +13,8 @@ from catanatron.state_functions import player_key, player_has_rolled
 from catanatron.models.map import CatanMap
 from catanatron.models.player import Color, Player
 
+from NEAT.states_to_vector import buildings_to_vector, ports_to_vector
+
 # To timeout RandomRobots from getting stuck...
 TURNS_LIMIT = 1000
 
@@ -146,14 +148,38 @@ class Game:
         """
         player = self.state.current_player()
         actions = self.state.playable_actions
+
+
+
+
         '''
-        print(f"buildings: {self.state.board.buildings}")
+        print([color.name for color in self.state.colors])
+        print(f"buildings: {[value[1] for value in self.state.board.buildings.values()]}")
         print(f"roads: {self.state.board.roads}")
         print(f"components: {self.state.board.connected_components}")
         print(f"buildable ids: {self.state.board.board_buildable_ids}")
         print(f"map: {self.state.board.map.land_tiles}")
         '''
-        # print(self.state.board.get_player_port_resources(player.color))
+
+        current_color = self.state.current_player().color
+        color_int = {}
+        colors = self.state.colors
+        counter = 1
+        for color in colors:
+            if color != current_color:
+                color_int[color] = str(counter)
+                counter += 1
+            else:
+                color_int[color] = "0"
+
+        buildings = buildings_to_vector(self.state, color_int)
+        ports = ports_to_vector(self.state, buildings)
+        print(color_int)
+        print(ports)
+        print(self.state.board.player_port_resources_cache)
+
+
+
         action = (
             decide_fn(player, self, actions)
             if decide_fn is not None
