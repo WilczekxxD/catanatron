@@ -13,7 +13,7 @@ from catanatron.state_functions import player_key, player_has_rolled
 from catanatron.models.map import CatanMap
 from catanatron.models.player import Color, Player
 
-from NEAT.states_to_vector import used_devs_to_vector
+from NEAT.states_to_vector import win_condition_to_vector, create_color_dic
 
 
 # To timeout RandomRobots from getting stuck...
@@ -158,7 +158,8 @@ class Game:
         print(f"buildable ids: {self.state.board.board_buildable_ids}")
         print(f"map: {self.state.board.map.land_tiles}")
         '''
-        print(used_devs_to_vector(self.state))
+        color_dictionary = create_color_dic(self.state)
+        print(win_condition_to_vector(self.state, color_dictionary))
 
         action = (
             decide_fn(player, self, actions)

@@ -1,8 +1,10 @@
 import copy
 import collections
-from catanatron.state_functions import player_key, get_played_dev_cards
+from catanatron.state_functions import player_key, get_visible_victory_points, get_longest_road_length, \
+    get_largest_army, player_num_resource_cards, player_num_dev_cards
 import networkx as nx
 from catanatron.models.board import STATIC_GRAPH
+
 '''
 there are basicly 2 ways of describing the map
 1. make an elaborate scheme of encoding state of every intersection, a nit like with tiles, based on:
@@ -24,7 +26,7 @@ possible values is hard
 + probably wont confuse the network that much
 - has more inputs
 
-breakdown of inputs for 2 scenario:
+breakdown of inputs for a mixed scenario:
 
 method of vectorising fields:
 author uses https://math.stackexchange.com/questions/2254655/hexagon-grid-coordinate-system
@@ -82,6 +84,12 @@ vp
 knights
 road building
 
+number of resource cards                                                                         3 inputs
+a number for every enemy
+
+numbee of dev cards                                                                              3 inputs  
+a number for each enemy 
+
 win conditions:                                                                                  12 inputs
 points * 4
 road lengths * 4
@@ -112,16 +120,7 @@ def state_to_vector(state):
     robber_vector = robber_to_vector(state)
 
     # getting colors to numbers can be done ones a game for every player instead here for now
-    current_color = state.current_player().color
-    color_int = {}
-    colors = state.colors.value
-    counter = 1
-    for color in colors:
-        if color != current_color:
-            color_int[color] = str(counter)
-            counter += 1
-        else:
-            color_int[color] = "0"
+    color_int = create_color_dic(state)
 
     # buildings (54, 1)
     buildings_vector = buildings_to_vector(state, color_int)
@@ -133,7 +132,23 @@ def state_to_vector(state):
     edge_list = generate_edge_list(state)
     roads_vector = roads_to_vector(state, edge_list, color_int)
 
-    # resources in hand:
+    # resources in hand (10, 1)
+    hand_vector = hand_to_vector(state)
+
+    # played devs (5, 1)
+    played_dev_vector = used_devs_to_vector(state)
+
+    # win conditions (12, 1)
+    win_conditions_vector = win_condition_to_vector(state, color_int)
+
+    # card number vector (6, 1)
+    card_number_vector = create_card_number_vector(state, color_int)
+
+    # combining them (188, 1)
+    vector = tile_vectors + robber_vector + ports_vector + roads_vector + hand_vector + played_dev_vector \
+             + win_conditions_vector + card_number_vector
+
+    return vector
 
 
 def tiles_to_vector(state):
@@ -200,7 +215,7 @@ def ports_to_vector(state, buildings_vector):
     print(port_nodes.keys())
     for j, key in enumerate(port_nodes):
         port_type_nodes = port_nodes[key]
-        for i in range(len(port_type_nodes)//2):
+        for i in range(len(port_type_nodes) // 2):
             owner = -1
             list_port_type_nodes = list(port_type_nodes)
             single_port_nodes = [list_port_type_nodes[i * 2], list_port_type_nodes[i * 2 + 1]]
@@ -213,7 +228,7 @@ def ports_to_vector(state, buildings_vector):
                     else:
                         owner = int(str(building)[-1])
                     break
-            ports_vector[j+i] = owner
+            ports_vector[j + i] = owner
 
     return ports_vector
 
@@ -264,3 +279,46 @@ def used_devs_to_vector(state):
             used_devs_vector[value] += state.player_state[f"{key}_PLAYED_{dev}"]
 
     return used_devs_vector
+
+
+def win_condition_to_vector(state, color_dictionary):
+    # visible points
+    visible_point_vector = [0, 0, 0, 0]
+    road_length_vector = [0, 0, 0, 0]
+    army_vector = [0, 0, 0, 0]
+    for color, x in color_dictionary.items():
+        # vp
+        visible_point_vector[int(x)] = get_visible_victory_points(state, color)
+        # road length
+        road_length_vector[int(x)] = get_longest_road_length(state, color)
+        # army
+        army_vector[int(x)] = state.player_state[f"{player_key(state, color)}_PLAYED_KNIGHT"]
+    win_conditions_vector = visible_point_vector + road_length_vector + army_vector
+    return win_conditions_vector
+
+
+def create_color_dic(state):
+    current_color = state.current_player().color
+    color_int = {}
+    colors = state.colors
+    counter = 1
+    for color in colors:
+        if color != current_color:
+            color_int[color] = str(counter)
+            counter += 1
+        else:
+            color_int[color] = "0"
+    return color_int
+
+
+def create_card_number_vector(state, color_dictionary):
+    resource_vector = [0, 0, 0]
+    dev_vector = [0, 0, 0]
+    for color, x in color_dictionary.items():
+        if x != 0:
+            id = int(x) - 1
+            resource_vector[id] = player_num_resource_cards(state, color)
+            dev_vector[id] = player_num_dev_cards(state, color)
+    card_number_vector = resource_vector + dev_vector
+
+    return card_number_vector
