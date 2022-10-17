@@ -113,14 +113,11 @@ dev_to_number = {
 }
 
 
-def state_to_vector(state):
+def state_to_vector(state, color_int, edge_list):
     # tile vector (19,1)
     tile_vectors = tiles_to_vector(state)
     # robber vector int, (1, 1)
     robber_vector = robber_to_vector(state)
-
-    # getting colors to numbers can be done ones a game for every player instead here for now
-    color_int = create_color_dic(state)
 
     # buildings (54, 1)
     buildings_vector = buildings_to_vector(state, color_int)
@@ -129,7 +126,6 @@ def state_to_vector(state):
     ports_vector = ports_to_vector(state, buildings_vector)
 
     # roads (72, 1)
-    edge_list = generate_edge_list(state)
     roads_vector = roads_to_vector(state, edge_list, color_int)
 
     # resources in hand (10, 1)
@@ -212,7 +208,6 @@ def ports_to_vector(state, buildings_vector):
     port_nodes = collections.OrderedDict(sorted(port_nodes.items()))
     # giving the None back
     port_nodes[None] = port_nodes.pop("None")
-    print(port_nodes.keys())
     for j, key in enumerate(port_nodes):
         port_type_nodes = port_nodes[key]
         for i in range(len(port_type_nodes) // 2):

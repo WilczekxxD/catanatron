@@ -1,6 +1,4 @@
 from typing import Iterable
-
-from catanatron.game import Game
 from catanatron.models.actions import Action
 from catanatron.models.player import Player
 
@@ -12,4 +10,5 @@ def create_game_states(game, playable_actions):
         game_copy = game.copy()
         game_copy.execute(playable_action)
         states.append(game.state)
+
     return states

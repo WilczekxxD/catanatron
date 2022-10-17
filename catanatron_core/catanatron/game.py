@@ -7,6 +7,7 @@ import random
 import sys
 from typing import Iterable, Union
 
+import NEAT.neat_env
 from catanatron.models.enums import Action, ActionPrompt, ActionType
 from catanatron.state import State, apply_action
 from catanatron.state_functions import player_key, player_has_rolled
@@ -158,8 +159,6 @@ class Game:
         print(f"buildable ids: {self.state.board.board_buildable_ids}")
         print(f"map: {self.state.board.map.land_tiles}")
         '''
-        color_dictionary = create_color_dic(self.state)
-        print(win_condition_to_vector(self.state, color_dictionary))
 
         action = (
             decide_fn(player, self, actions)
