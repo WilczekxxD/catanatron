@@ -7,7 +7,7 @@ reset_on_extinction   = False
 
 [DefaultGenome]
 # node activation options
-activation_default      = tanh
+activation_default      = identity
 activation_mutate_rate  = 1.0
 activation_options      = clamped cube exp identity log relu sigmoid softplus tanh
 

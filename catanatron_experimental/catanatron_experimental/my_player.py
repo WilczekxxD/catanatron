@@ -22,6 +22,5 @@ class MyPlayer(Player):
             ratings.append(rating)
 
         id = np.argmax(ratings)
-
         # for the sake of testing
         return playable_actions[id]

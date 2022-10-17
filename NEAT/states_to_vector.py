@@ -116,6 +116,7 @@ dev_to_number = {
 def state_to_vector(state, color_int, edge_list):
     # tile vector (19,1)
     tile_vectors = tiles_to_vector(state)
+
     # robber vector int, (1, 1)
     robber_vector = robber_to_vector(state)
 
@@ -141,8 +142,11 @@ def state_to_vector(state, color_int, edge_list):
     card_number_vector = create_card_number_vector(state, color_int)
 
     # combining them (188, 1)
-    vector = tile_vectors + robber_vector + ports_vector + roads_vector + hand_vector + played_dev_vector \
-             + win_conditions_vector + card_number_vector
+    #vectors = [tile_vectors, robber_vector, buildings_vector, ports_vector, roads_vector, hand_vector,
+     #          played_dev_vector, win_conditions_vector, card_number_vector]
+
+    vector = tile_vectors + robber_vector + buildings_vector + ports_vector + roads_vector + hand_vector \
+             + played_dev_vector + win_conditions_vector + card_number_vector
 
     return vector
 
@@ -223,7 +227,7 @@ def ports_to_vector(state, buildings_vector):
                     else:
                         owner = int(str(building)[-1])
                     break
-            ports_vector[j + i] = owner
+            ports_vector[j + i] = int(owner)
 
     return ports_vector
 
@@ -233,8 +237,13 @@ def roads_to_vector(state, edge_list, color_dictionary):
     roads_vector = [-1 for _ in range(72)]
     roads = state.board.roads
     for edge, color in roads.items():
-        index = edge_list.index(edge)
-        int_color = color_dictionary[color]
+
+        try:
+            index = edge_list.index(edge)
+        except ValueError:
+            index = edge_list.index((edge[1], edge[0]))
+
+        int_color = int(color_dictionary[color])
         roads_vector[index] = int_color
 
     return roads_vector

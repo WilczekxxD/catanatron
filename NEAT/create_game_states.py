@@ -9,6 +9,6 @@ def create_game_states(game, playable_actions):
     for playable_action in playable_actions:
         game_copy = game.copy()
         game_copy.execute(playable_action)
-        states.append(game.state)
+        states.append(game_copy.state)
 
     return states

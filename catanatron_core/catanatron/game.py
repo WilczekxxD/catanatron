@@ -136,6 +136,12 @@ class Game:
             self.play_tick(decide_fn=decide_fn, accumulators=accumulators)
         for accumulator in accumulators:
             accumulator.after(self)
+
+        keys = [player_key(self.state, c) for c in self.state.colors]
+        for k, player in zip(keys, self.state.players):
+            print(f'player: {player} has {self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]}')
+            player.genome.fitness += self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]
+
         return self.winning_color()
 
     def play_tick(self, decide_fn=None, accumulators=[]):
@@ -189,6 +195,7 @@ class Game:
         result = None
         for color in self.state.colors:
             key = player_key(self.state, color)
+
             if (
                 self.state.player_state[f"{key}_ACTUAL_VICTORY_POINTS"]
                 >= self.vps_to_win
