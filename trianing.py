@@ -25,7 +25,7 @@ def main(genomes, config):
     for player in players:
         player.neat_env = neat_env
 
-    print(game.play())  # returns winning color
+    game.play()  # returns winning color
 
     # Ensure you have `docker-compose up` running
     #   in another terminal tab:
@@ -45,7 +45,7 @@ def run(config_path):
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
 
-    winner = p.run(main, 1)
+    winner = p.run(main, 506)
     # print('\nBest genome:\n{!s}'.format(winner))
     return winner, p.config
 
