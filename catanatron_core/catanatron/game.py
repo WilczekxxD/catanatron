@@ -1,7 +1,7 @@
 """
 Contains Game class which is a thin-wrapper around the State class.
 """
-
+import time
 import uuid
 import random
 import sys
@@ -18,7 +18,7 @@ from NEAT.states_to_vector import win_condition_to_vector, create_color_dic
 
 
 # To timeout RandomRobots from getting stuck...
-TURNS_LIMIT = 1000
+TURNS_LIMIT = 300
 
 
 def is_valid_action(state, action):
@@ -139,7 +139,7 @@ class Game:
 
         keys = [player_key(self.state, c) for c in self.state.colors]
         for k, player in zip(keys, self.state.players):
-            print(f'player: {player} has {self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]}')
+            # print(f'player: {player} has {self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]}')
             player.genome.fitness += self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]
 
         return self.winning_color()
@@ -171,6 +171,7 @@ class Game:
             if decide_fn is not None
             else player.decide(self, actions)
         )
+
         # Call accumulator.step here, because we want game_before_action, action
         if len(accumulators) > 0:
             for accumulator in accumulators:

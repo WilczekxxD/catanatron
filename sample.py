@@ -1,11 +1,11 @@
 from catanatron import Game, RandomPlayer, Color
-
+from NEAT.restore import read_model
 from catanatron_experimental.my_player import MyPlayer
 from catanatron_server.utils import open_link
 
 # Play a simple 4v4 game. Edit MyPlayer with your logic!
 players = [
-    RandomPlayer(Color.RED),
+    MyPlayer(Color.RED),
     RandomPlayer(Color.BLUE),
     RandomPlayer(Color.WHITE),
     RandomPlayer(Color.ORANGE),
