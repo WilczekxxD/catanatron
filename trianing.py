@@ -48,10 +48,10 @@ def run(config_path):
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation, config_path)
 
-    # p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-243')
+    # p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-317')
     p = neat.Population(config)
     # showing stats instead of black running screan
-    p.add_reporter(neat.Checkpointer(1))
+    p.add_reporter(neat.Checkpointer(20))
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
@@ -63,6 +63,6 @@ def run(config_path):
 
 if __name__ == "__main__":
     local_dir = os.path.dirname(__file__)
-    config_path = os.path.join(local_dir, 'NEAT_config.txt')
+    config_path = os.path.join(local_dir, 'NEAT_config2.txt')
     winner = run(config_path)
-    NEAT.restore.save_model(winner, "winner2")
+    NEAT.restore.save_model(winner, "winner")

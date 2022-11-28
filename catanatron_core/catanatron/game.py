@@ -139,8 +139,8 @@ class Game:
 
         keys = [player_key(self.state, c) for c in self.state.colors]
         for k, player in zip(keys, self.state.players):
-            # print(f'player: {player} has {self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]}')
-            player.genome.fitness += self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]
+            print(f'player: {player} has {self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]}')
+            #player.genome.fitness += self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]
 
         return self.winning_color()
 
