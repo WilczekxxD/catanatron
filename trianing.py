@@ -5,7 +5,7 @@ from catanatron_experimental.my_player import MyPlayer
 from catanatron_server.utils import open_link
 import os
 import neat
-from NEAT.neat_env import NeatEnv
+from NEAT.neat_env2 import NeatEnv
 import time
 
 

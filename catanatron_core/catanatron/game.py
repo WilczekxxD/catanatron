@@ -139,8 +139,14 @@ class Game:
 
         keys = [player_key(self.state, c) for c in self.state.colors]
         for k, player in zip(keys, self.state.players):
-            print(f'player: {player} has {self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]}')
-            #player.genome.fitness += self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]
+            # print(f'player: {player} has {self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]}')
+            vp = self.state.player_state[f"{k}_ACTUAL_VICTORY_POINTS"]
+            """ this approach promotes quick wins and slow loses"""
+            if vp == 10:
+                evaluation = vp * TURNS_LIMIT/self.state.num_turns
+            else:
+                evaluation = vp * self.state.num_turns/TURNS_LIMIT
+            player.genome.fitness += evaluation
 
         return self.winning_color()
 
