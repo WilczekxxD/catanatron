@@ -1,10 +1,10 @@
 import pickle
 import copy
 from collections import defaultdict
-from typing import Any, Set, Dict, Tuple
+from typing import Any, Set, Dict, Tuple, List
 import functools
 
-import networkx as nx
+import networkx as nx  # type: ignore
 
 from catanatron.models.player import Color
 from catanatron.models.map import (
@@ -28,13 +28,11 @@ for tile in base_map.tiles.values():
 
 @functools.lru_cache(1)
 def get_node_distances():
-    global STATIC_GRAPH
     return nx.floyd_warshall(STATIC_GRAPH)
 
 
 @functools.lru_cache(3)  # None, range(54), range(24)
 def get_edges(land_nodes=None):
-    global STATIC_GRAPH, NUM_NODES
     return list(STATIC_GRAPH.subgraph(land_nodes or range(NUM_NODES)).edges())
 
 
@@ -48,7 +46,7 @@ class Board:
             to Color (if there is a road there). Contains inverted
             edges as well for ease of querying.
         connected_components (Dict[Color, List[Set[NodeId]]]): Cache
-            datastructure to speed up mantaining longest road computation.
+            datastructure to speed up maintaining longest road computation.
             To be queried by Color. Value is a list of node sets.
         board_buildable_ids (Set[NodeId]): Cache of buildable node ids in board.
         road_color (Color): Color of player with longest road.
@@ -57,7 +55,7 @@ class Board:
     """
 
     def __init__(self, catan_map=None, initialize=True):
-        self.buildable_subgraph = None
+        self.buildable_subgraph: Any = None
         self.buildable_edges_cache = {}
         self.player_port_resources_cache = {}
         if initialize:
@@ -83,7 +81,6 @@ class Board:
             ).__next__()
 
             # Cache buildable subgraph
-            global STATIC_GRAPH
             self.buildable_subgraph = STATIC_GRAPH.subgraph(self.map.land_nodes)
 
     def build_settlement(self, color, node_id, initial_build_phase=False):
@@ -347,13 +344,11 @@ class Board:
 
 
 def longest_acyclic_path(board: Board, node_set: Set[int], color: Color):
-    global STATIC_GRAPH
-
     paths = []
     for start_node in node_set:
         # do DFS when reach leaf node, stop and add to paths
         paths_from_this_node = []
-        agenda = [(start_node, [])]
+        agenda: List[Tuple[int, Any]] = [(start_node, [])]
         while len(agenda) > 0:
             node, path_thus_far = agenda.pop()
 

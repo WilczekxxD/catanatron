@@ -353,7 +353,7 @@ def reachability_features(game: Game, p0_color: Color, levels=REACHABLE_FEATURES
         enemy_roads = frozenset(
             k for k, v in game.state.board.roads.items() if v is not None and v != color
         )
-        for (level, level_nodes, paths) in iter_level_nodes(
+        for level, level_nodes, paths in iter_level_nodes(
             enemy_nodes, enemy_roads, levels, frozenset(zero_nodes)
         ):
             production = count_production(
@@ -377,7 +377,6 @@ def count_production(nodes, catan_map):
 
 
 def expansion_features(game: Game, p0_color: Color):
-    global STATIC_GRAPH
     MAX_EXPANSION_DISTANCE = 3  # exclusive
 
     features = {}

@@ -4,7 +4,7 @@ by current player). Main function is generate_playable_actions.
 """
 import operator as op
 from functools import reduce
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Set, Tuple, Union
 
 from catanatron.models.decks import (
     CITY_COST_FREQDECK,
@@ -104,7 +104,7 @@ def generate_playable_actions(state) -> List[Action]:
         # you should be able to accept for each of the "accepting players"
         actions = [Action(color, ActionType.CANCEL_TRADE, None)]
 
-        for (other_color, accepted) in zip(state.colors, state.acceptees):
+        for other_color, accepted in zip(state.colors, state.acceptees):
             if accepted:
                 actions.append(
                     Action(
@@ -123,7 +123,7 @@ def monopoly_possibilities(color) -> List[Action]:
 
 
 def year_of_plenty_possibilities(color, freqdeck: List[int]) -> List[Action]:
-    options = set()
+    options: Set[Union[Tuple[FastResource, FastResource], Tuple[FastResource]]] = set()
     for i, first_card in enumerate(RESOURCES):
         for j in range(i, len(RESOURCES)):
             second_card = RESOURCES[j]  # doing it this way to not repeat
@@ -202,7 +202,7 @@ def city_possibilities(state, color) -> List[Action]:
 
 def robber_possibilities(state, color) -> List[Action]:
     actions = []
-    for (coordinate, tile) in state.board.map.land_tiles.items():
+    for coordinate, tile in state.board.map.land_tiles.items():
         if coordinate == state.board.robber_coordinate:
             continue  # ignore. must move robber.
 

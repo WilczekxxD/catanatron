@@ -378,11 +378,11 @@ def initialize_tiles(
     )
 
     # for each topology entry, place a tile. keep track of nodes and edges
-    all_tiles = {}
+    all_tiles: Dict[Coordinate, Tile] = {}
     node_autoinc = 0
     tile_autoinc = 0
     port_autoinc = 0
-    for (coordinate, tile_type) in map_template.topology.items():
+    for coordinate, tile_type in map_template.topology.items():
         nodes, edges, node_autoinc = get_nodes_and_edges(
             all_tiles, coordinate, node_autoinc
         )
@@ -434,7 +434,7 @@ def get_nodes_and_edges(tiles, coordinate: Coordinate, node_autoinc):
 
     # Find pre-existing ones
     neighbor_tiles = [(add(coordinate, UNIT_VECTORS[d]), d) for d in Direction]
-    for (coord, neighbor_direction) in neighbor_tiles:
+    for coord, neighbor_direction in neighbor_tiles:
         if coord not in tiles:
             continue
 

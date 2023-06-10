@@ -34,11 +34,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r dev-requirements.txt
-          pip install -e catanatron_core
-          pip install -e catanatron_gym
-          pip install -e catanatron_server
-          pip install -e catanatron_experimental
+          pip install -r all-requirements.txt
       - name: Lint with black
         run: |
           black catanatron_core --check
@@ -72,13 +68,16 @@ jobs:
           pip install -e catanatron_gym
       - name: Inline test
         run: |
-          python -c "import gym; env = gym.make('catanatron_gym:catanatron-v0')"
+          python -c "import gymnasium as gym; env = gym.make('catanatron_gym:catanatron-v0')"
 
   build-ui:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - run: npm ci
         working-directory: ./ui
       - run: npm run build
